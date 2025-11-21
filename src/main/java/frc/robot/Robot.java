@@ -35,7 +35,7 @@ public class Robot extends LoggedRobot {
     SignalLogger.enableAutoLogging(false);
     RobotController.setBrownoutVoltage(6.0);
     // Metadata about the current code running on the robot
-    Logger.recordMetadata("Codebase", "2025 Offseason");
+    Logger.recordMetadata("Codebase", "2025 WCP Cadathon");
     Logger.recordMetadata("RuntimeType", getRuntimeType().toString());
     Logger.recordMetadata("Robot Mode", ROBOT_TYPE.toString());
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
