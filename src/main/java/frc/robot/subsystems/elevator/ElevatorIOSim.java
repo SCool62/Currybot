@@ -12,7 +12,7 @@ public class ElevatorIOSim implements ElevatorIO {
     // TODO: ACTUAL VALUES
     private ElevatorSim physicsSim = new ElevatorSim(
         DCMotor.getKrakenX60Foc(2), 
-        0,
+        ElevatorSubsystem.GEAR_RATIO,
         0, 
         0, 
         0, 
