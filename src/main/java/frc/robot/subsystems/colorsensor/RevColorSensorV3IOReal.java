@@ -14,7 +14,7 @@ public class RevColorSensorV3IOReal implements ColorSensorIO {
 
     @Override
     public void updateInputs(ColorSensorIOInputs inputs) {
-        inputs.color = sensor.getColor();
+        inputs.color = sensor.getColor().toHexString();
     }
     
 }

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public interface ColorSensorIO {
     @AutoLog
     public static class ColorSensorIOInputs {
-        public Color color = Color.kWhite;
+        public String color = "";
     }
 
     void updateInputs(ColorSensorIOInputs inputs);
