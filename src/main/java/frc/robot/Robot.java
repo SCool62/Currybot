@@ -4,20 +4,17 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.CANBus.CANBusStatus;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends LoggedRobot {
 
@@ -29,7 +26,6 @@ public class Robot extends LoggedRobot {
 
   // Change SIM to REPLAY to run robot in replay mode
   public static final RobotType ROBOT_TYPE = Robot.isReal() ? RobotType.REAL : RobotType.SIM;
-
 
   private final CANBus canivore = new CANBus("*");
 
