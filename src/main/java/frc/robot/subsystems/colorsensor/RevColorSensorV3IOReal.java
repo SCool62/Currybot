@@ -9,6 +9,7 @@ public class RevColorSensorV3IOReal implements ColorSensorIO {
 
   /**
    * Creates a new Rev Color Sensor V3
+   *
    * @param port the I2C port the sensor is plugged into
    */
   public RevColorSensorV3IOReal(I2C.Port port) {

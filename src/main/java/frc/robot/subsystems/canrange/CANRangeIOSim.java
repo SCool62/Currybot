@@ -33,6 +33,7 @@ public class CANRangeIOSim implements CANRangeIO {
 
   /**
    * Sets the simulated distance
+   *
    * @param distanceMeters the simulated distance from sensor to object
    */
   public void setDistance(double distanceMeters) {

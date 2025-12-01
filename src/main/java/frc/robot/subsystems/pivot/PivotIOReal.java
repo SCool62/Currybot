@@ -30,6 +30,7 @@ public class PivotIOReal implements PivotIO {
 
   /**
    * Creates a new pivot with a TalonFX-controlled motor
+   *
    * @param motorId the ID of the motor on the CAN bus
    * @param config the motor's configuration
    */

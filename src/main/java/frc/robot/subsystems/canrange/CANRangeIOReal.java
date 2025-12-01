@@ -16,6 +16,7 @@ public class CANRangeIOReal implements CANRangeIO {
 
   /**
    * Creates a new CANrange
+   *
    * @param deviceId the ID of the device on the CAN bus
    * @param config the sensor's configuration
    */

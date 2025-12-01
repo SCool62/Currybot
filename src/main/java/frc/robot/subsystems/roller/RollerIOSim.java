@@ -18,6 +18,7 @@ public class RollerIOSim implements RollerIO {
 
   /**
    * Creates a simulated roller with 1 krakenX60 with FOC
+   *
    * @param jKgMetersSquared the moment of inertia of the mechanism
    * @param gearing the gear ratio from rotor to mechanism
    * @param feedforward the roller's feedforward controller

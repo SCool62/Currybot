@@ -19,6 +19,7 @@ public class PivotIOSim implements PivotIO {
 
   /**
    * Creates a simulated pivot with 1 krakenX60 with FOC
+   *
    * @param gearRatio the ratio from motor to mechanism
    * @param jKgMetersSquared the moment of inertia of the mechanism
    * @param armLengthMeters the length of the arm from its pivot point
