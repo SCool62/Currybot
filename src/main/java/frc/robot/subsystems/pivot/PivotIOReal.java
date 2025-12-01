@@ -8,7 +8,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -17,57 +16,59 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 public class PivotIOReal implements PivotIO {
-    private final TalonFX motor;
-    
-    private final StatusSignal<Angle> position;
-    private final StatusSignal<AngularVelocity> velocity;
-    private final StatusSignal<Voltage> voltage;
-    private final StatusSignal<Current> statorCurrent;
-    private final StatusSignal<Current> supplyCurrent;
-    private final StatusSignal<Temperature> temperature;
+  private final TalonFX motor;
 
-    private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    private PositionVoltage positionVoltage = new PositionVoltage(0.0).withEnableFOC(true);
+  private final StatusSignal<Angle> position;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> voltage;
+  private final StatusSignal<Current> statorCurrent;
+  private final StatusSignal<Current> supplyCurrent;
+  private final StatusSignal<Temperature> temperature;
 
-    public PivotIOReal(int motorId, TalonFXConfiguration config) {
-        motor = new TalonFX(motorId);
-        motor.getConfigurator().apply(config);
+  private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
+  private PositionVoltage positionVoltage = new PositionVoltage(0.0).withEnableFOC(true);
 
-        position = motor.getPosition();
-        velocity = motor.getVelocity();
-        voltage = motor.getMotorVoltage();
-        statorCurrent = motor.getStatorCurrent();
-        supplyCurrent = motor.getSupplyCurrent();
-        temperature = motor.getDeviceTemp();
+  public PivotIOReal(int motorId, TalonFXConfiguration config) {
+    motor = new TalonFX(motorId);
+    motor.getConfigurator().apply(config);
 
-        BaseStatusSignal.setUpdateFrequencyForAll(50.0, position, velocity, voltage, statorCurrent, supplyCurrent, temperature);
-        motor.optimizeBusUtilization();
-    }
+    position = motor.getPosition();
+    velocity = motor.getVelocity();
+    voltage = motor.getMotorVoltage();
+    statorCurrent = motor.getStatorCurrent();
+    supplyCurrent = motor.getSupplyCurrent();
+    temperature = motor.getDeviceTemp();
 
-    @Override
-    public void updateInputs(PivotIOInputs inputs) {
-        BaseStatusSignal.refreshAll(position, velocity, voltage, statorCurrent, supplyCurrent, temperature);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, position, velocity, voltage, statorCurrent, supplyCurrent, temperature);
+    motor.optimizeBusUtilization();
+  }
 
-        inputs.position = new Rotation2d(position.getValue());
-        inputs.angularVelocityRotationsPerSecond = velocity.getValue().in(RotationsPerSecond);
-        inputs.voltage = voltage.getValueAsDouble();
-        inputs.statorCurrentAmps = statorCurrent.getValueAsDouble();
-        inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
-        inputs.tempC = temperature.getValueAsDouble();
-    }
+  @Override
+  public void updateInputs(PivotIOInputs inputs) {
+    BaseStatusSignal.refreshAll(
+        position, velocity, voltage, statorCurrent, supplyCurrent, temperature);
 
-    @Override
-    public void setPositionSetpoint(Rotation2d setpoint) {
-        motor.setControl(positionVoltage.withPosition(setpoint.getMeasure()));
-    }
+    inputs.position = new Rotation2d(position.getValue());
+    inputs.angularVelocityRotationsPerSecond = velocity.getValue().in(RotationsPerSecond);
+    inputs.voltage = voltage.getValueAsDouble();
+    inputs.statorCurrentAmps = statorCurrent.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+    inputs.tempC = temperature.getValueAsDouble();
+  }
 
-    @Override
-    public void setVoltage(double voltage) {
-        motor.setControl(voltageOut.withOutput(voltage));
-    }
+  @Override
+  public void setPositionSetpoint(Rotation2d setpoint) {
+    motor.setControl(positionVoltage.withPosition(setpoint.getMeasure()));
+  }
 
-    @Override
-    public void resetEncoder(Rotation2d position) {
-        motor.setPosition(position.getMeasure());
-    }
+  @Override
+  public void setVoltage(double voltage) {
+    motor.setControl(voltageOut.withOutput(voltage));
+  }
+
+  @Override
+  public void resetEncoder(Rotation2d position) {
+    motor.setPosition(position.getMeasure());
+  }
 }
