@@ -14,6 +14,11 @@ public class CANRangeIOReal implements CANRangeIO {
   private final StatusSignal<Boolean> isDetected;
   private final StatusSignal<Distance> distance;
 
+  /**
+   * Creates a new CANrange
+   * @param deviceId the ID of the device on the CAN bus
+   * @param config the sensor's configuration
+   */
   public CANRangeIOReal(int deviceId, CANrangeConfiguration config) {
     this.canrange = new CANrange(deviceId);
 

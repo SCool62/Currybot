@@ -16,6 +16,14 @@ public class RollerIOSim implements RollerIO {
   private final ProfiledPIDController positionPID;
   private final ProfiledPIDController velocityPID;
 
+  /**
+   * Creates a simulated roller with 1 krakenX60 with FOC
+   * @param jKgMetersSquared the moment of inertia of the mechanism
+   * @param gearing the gear ratio from rotor to mechanism
+   * @param feedforward the roller's feedforward controller
+   * @param positionPID the PID controlling the roller's position
+   * @param velocityPID the PID controlling the roller's velocity
+   */
   public RollerIOSim(
       double jKgMetersSquared,
       double gearing,

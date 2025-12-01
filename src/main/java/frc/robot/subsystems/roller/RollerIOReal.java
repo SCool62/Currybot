@@ -27,9 +27,16 @@ public class RollerIOReal implements RollerIO {
   private final StatusSignal<Voltage> voltage;
 
   private VelocityVoltage velocityVoltage = new VelocityVoltage(0.0).withEnableFOC(true);
-  private PositionVoltage positionVoltage = new PositionVoltage(0.0).withEnableFOC(true);
+  private PositionVoltage positionVoltage = new PositionVoltage(0.0).withEnableFOC(true).withSlot(1);
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
 
+  /**
+   * Creates a new Talon FX controlled roller
+   * @param motorID the ID of the motor on the CAN bus
+   * @param config the motor's configuration
+   * @implNote
+   *  If using position control, put position PID and feedforward gains on slot 1
+   */
   public RollerIOReal(int motorID, TalonFXConfiguration config) {
     motor = new TalonFX(motorID);
 

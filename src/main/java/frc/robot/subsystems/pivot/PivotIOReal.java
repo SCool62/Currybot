@@ -28,6 +28,11 @@ public class PivotIOReal implements PivotIO {
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private PositionVoltage positionVoltage = new PositionVoltage(0.0).withEnableFOC(true);
 
+  /**
+   * Creates a new pivot with a TalonFX-controlled motor
+   * @param motorId the ID of the motor on the CAN bus
+   * @param config the motor's configuration
+   */
   public PivotIOReal(int motorId, TalonFXConfiguration config) {
     motor = new TalonFX(motorId);
     motor.getConfigurator().apply(config);

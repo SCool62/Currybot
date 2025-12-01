@@ -31,6 +31,10 @@ public class CANRangeIOSim implements CANRangeIO {
     inputs.isDetected = isDetected.getValue();
   }
 
+  /**
+   * Sets the simulated distance
+   * @param distanceMeters the simulated distance from sensor to object
+   */
   public void setDistance(double distanceMeters) {
     simState.setDistance(distanceMeters);
   }
