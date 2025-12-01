@@ -24,6 +24,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
+    physicsSim.update(0.02);
     inputs.leaderPositionMeters = physicsSim.getPositionMeters();
     inputs.leaderVoltage = currentAppliedVoltage;
     inputs.leaderStatorCurrentAmps = physicsSim.getCurrentDrawAmps();

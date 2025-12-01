@@ -35,6 +35,7 @@ public class RollerIOSim implements RollerIO {
 
   @Override
   public void updateInputs(RollerIOInputs inputs) {
+    physicsSim.update(0.02);
     inputs.position = new Rotation2d(physicsSim.getAngularPosition());
     inputs.velocityRotationsPerSecond = physicsSim.getAngularVelocity().in(RotationsPerSecond);
     inputs.voltage = physicsSim.getInputVoltage();
