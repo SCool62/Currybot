@@ -2,6 +2,7 @@ package frc.robot.subsystems.roller;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,7 +15,7 @@ public class RollerIOSim implements RollerIO {
 
   private final SimpleMotorFeedforward feedforward;
   private final ProfiledPIDController positionPID;
-  private final ProfiledPIDController velocityPID;
+  private final PIDController velocityPID;
 
   /**
    * Creates a simulated roller with 1 krakenX60 with FOC
@@ -30,7 +31,7 @@ public class RollerIOSim implements RollerIO {
       double gearing,
       SimpleMotorFeedforward feedforward,
       ProfiledPIDController positionPID,
-      ProfiledPIDController velocityPID) {
+      PIDController velocityPID) {
     physicsSim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
