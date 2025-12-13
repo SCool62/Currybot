@@ -21,7 +21,19 @@ public class Robot extends LoggedRobot {
   public enum RobotType {
     REAL,
     SIM,
-    REPLAY
+    REPLAY;
+
+    public boolean isReal() {
+      return this.equals(RobotType.REAL);
+    }
+
+    public boolean isSimulation() {
+      return this.equals(RobotType.SIM);
+    }
+
+    public boolean isReplay() {
+      return this.equals(RobotType.REPLAY);
+    }
   }
 
   // Change SIM to REPLAY to run robot in replay mode
