@@ -46,4 +46,6 @@ public interface PivotIO {
   default void resetEncoder() {
     resetEncoder(Rotation2d.kZero);
   }
+
+  Rotation2d getSetpoint();
 }

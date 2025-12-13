@@ -28,6 +28,8 @@ public class PivotIOReal implements PivotIO {
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private PositionVoltage positionVoltage = new PositionVoltage(0.0).withEnableFOC(true);
 
+  private Rotation2d setpoint = Rotation2d.kZero;
+
   /**
    * Creates a new pivot with a TalonFX-controlled motor
    *
@@ -65,6 +67,7 @@ public class PivotIOReal implements PivotIO {
 
   @Override
   public void setPositionSetpoint(Rotation2d setpoint) {
+    this.setpoint = setpoint;
     motor.setControl(positionVoltage.withPosition(setpoint.getMeasure()));
   }
 
@@ -76,5 +79,10 @@ public class PivotIOReal implements PivotIO {
   @Override
   public void resetEncoder(Rotation2d position) {
     motor.setPosition(position.getMeasure());
+  }
+
+  @Override
+  public Rotation2d getSetpoint() {
+      return setpoint;
   }
 }

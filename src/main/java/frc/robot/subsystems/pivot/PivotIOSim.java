@@ -17,6 +17,8 @@ public class PivotIOSim implements PivotIO {
 
   private double appliedVoltage = 0.0;
 
+  private Rotation2d setpoint = Rotation2d.kZero;
+
   /**
    * Creates a simulated pivot with 1 krakenX60 with FOC
    *
@@ -66,6 +68,7 @@ public class PivotIOSim implements PivotIO {
 
   @Override
   public void setPositionSetpoint(Rotation2d setpoint) {
+    this.setpoint = setpoint;
     setVoltage(
         positionPID.calculate(physicsSim.getAngleRads(), setpoint.getRadians())
             + feedforward.calculate(setpoint.getRadians(), positionPID.getSetpoint().velocity));
@@ -80,5 +83,10 @@ public class PivotIOSim implements PivotIO {
   @Override
   public void resetEncoder(Rotation2d position) {
     physicsSim.setState(position.getRadians(), 0.0);
+  }
+
+  @Override
+  public Rotation2d getSetpoint() {
+      return setpoint;
   }
 }

@@ -5,7 +5,9 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.pivot.PivotIO;
@@ -16,6 +18,11 @@ import frc.robot.subsystems.roller.RollerIO;
 import frc.robot.subsystems.roller.RollerIOInputsAutoLogged;
 import frc.robot.subsystems.roller.RollerIOReal;
 import frc.robot.subsystems.roller.RollerIOSim;
+
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -67,5 +74,30 @@ public class ArmSubsystem extends SubsystemBase {
 
     pivotIO.updateInputs(pivotIOInputs);
     Logger.processInputs("Arm/Pivot", pivotIOInputs);
+  }
+
+
+  public Command setPivotSetpoint(Supplier<Rotation2d> position) {
+    return this.run(() -> pivotIO.setPositionSetpoint(position.get()));
+  }
+
+  public Command setRollerVoltage(DoubleSupplier voltage) {
+    return this.run(() -> rollerIO.setVoltage(voltage.getAsDouble()));
+  }
+
+  public Command setPivotSetpointAndRollerVoltage(Supplier<Rotation2d> position, DoubleSupplier rollerVoltage) {
+    return this.run(() -> {
+        rollerIO.setVoltage(rollerVoltage.getAsDouble());
+        pivotIO.setPositionSetpoint(position.get());
+    });
+  }
+
+  public boolean atExtension(Rotation2d setpoint) {
+    return pivotIOInputs.position.equals(setpoint);
+  }
+
+  @AutoLogOutput(key = "Arm/Pivot/At Extension")
+  public boolean atExtension() {
+    return atExtension(pivotIO.getSetpoint());
   }
 }
