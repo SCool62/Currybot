@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -86,7 +87,12 @@ public class Superstructure {
 
   private Trigger shooterBeambreakTrigger;
 
-  public Superstructure() {}
+  public Superstructure(CommandXboxController driver, CommandXboxController operator) {
+    intakeBallReq = driver.leftTrigger();
+    intakePanelReq = driver.leftBumper();
+
+    scoreBallReq = driver.rightTrigger();
+  }
 
   private void bindTransition(State from, State to, Trigger trigger) {
     new Trigger(() -> state.equals(from)).and(trigger).onTrue(changeStateTo(to));
