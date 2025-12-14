@@ -4,56 +4,60 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.ArmSubsystem;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Superstructure {
   public static enum State {
-    IDLE(0),
+    IDLE(0, false),
 
     // Just balls
-    INTAKE_BALL(-1),
-    REJECT_BALL_1(0),
-    REJECT_BALL_2(1),
-    INDEX_BALL_1(1),
-    INDEX_BALL_2(2),
-    READY_BALL_1(1),
-    READY_BALL_2(2),
-    SHOOT_BALL_1(0),
-    SHOOT_BALL_2(1),
+    INTAKE_BALL(-1, false),
+    REJECT_BALL_1(0, false),
+    REJECT_BALL_2(1, false),
+    INDEX_BALL_1(1, false),
+    INDEX_BALL_2(2, false),
+    READY_BALL_1(1, false),
+    READY_BALL_2(2, false),
+    SHOOT_BALL_1(0, false),
+    SHOOT_BALL_2(1, false),
 
     // Just panels
-    INAKE_PANEL(0),
-    READY_PANEL(0),
-    SCORE_PANEL_LOW(0),
-    SCORE_PANEL_HIGH(0),
+    INTAKE_PANEL(0, false),
+    READY_PANEL(0, true),
+    SCORE_PANEL_LOW(0, false),
+    SCORE_PANEL_HIGH(0, false),
 
     // Both balls and panels
-    INTAKE_BALL_WITH_PANEL(-1),
-    REJECT_BALL_1_WITH_PANEL(0),
-    REJECT_BALL_2_WITH_PANEL(1),
-    INDEX_BALL_1_WITH_PANEL(1),
-    INDEX_BALL_2_WITH_PANEL(2),
-    READY_BALL_1_WITH_PANEL(1),
-    READY_BALL_2_WITH_PANEL(2),
-    SHOOT_BALL_1_WITH_PANEL(0),
-    SHOOT_BALL_2_WITH_PANEL(1),
+    INTAKE_BALL_WITH_PANEL(-1, true),
+    REJECT_BALL_1_WITH_PANEL(0, true),
+    REJECT_BALL_2_WITH_PANEL(1, true),
+    INDEX_BALL_1_WITH_PANEL(1, true),
+    INDEX_BALL_2_WITH_PANEL(2, true),
+    READY_BALL_1_WITH_PANEL(1, true),
+    READY_BALL_2_WITH_PANEL(2, true),
+    SHOOT_BALL_1_WITH_PANEL(0, true),
+    SHOOT_BALL_2_WITH_PANEL(1, true),
 
-    INAKE_PANEL_WITH_BALL_1(1),
-    READY_PANEL_WITH_BALL_1(1),
-    SCORE_PANEL_LOW_WITH_BALL_1(1),
-    SCORE_PANEL_HIGH_WITH_BALL_1(1),
-    INAKE_PANEL_WITH_BALL_2(2),
-    READY_PANEL_WITH_BALL_2(2),
-    SCORE_PANEL_LOW_WITH_BALL_2(2),
-    SCORE_PANEL_HIGH_WITH_BALL_2(2),
+    INTAKE_PANEL_WITH_BALL_1(1, false),
+    READY_PANEL_WITH_BALL_1(1, true),
+    SCORE_PANEL_LOW_WITH_BALL_1(1, false),
+    SCORE_PANEL_HIGH_WITH_BALL_1(1, false),
+    INTAKE_PANEL_WITH_BALL_2(2, false),
+    READY_PANEL_WITH_BALL_2(2, true),
+    SCORE_PANEL_LOW_WITH_BALL_2(2, false),
+    SCORE_PANEL_HIGH_WITH_BALL_2(2, false),
     ;
     // TODO: ADD MECH SPECIFIC STATES
 
     private final int numBalls;
+    private final boolean hasPanel;
 
     // Put -1 for unknown amount of balls
-    private State(int numBalls) {
+    private State(int numBalls, boolean hasPanel) {
       this.numBalls = numBalls;
+      this.hasPanel = hasPanel;
     }
 
     public boolean hasNoBall() {
@@ -67,7 +71,13 @@ public class Superstructure {
     public boolean hasTwoBalls() {
       return numBalls == 2;
     }
+
+    public boolean hasPanel() {
+      return hasPanel;
+    }
   }
+
+  private final ArmSubsystem arm;
 
   @AutoLogOutput(key = "Superstructure/State")
   private State state = State.IDLE;
@@ -79,19 +89,61 @@ public class Superstructure {
   // TODO: SET THESE
   private Trigger intakeBallReq;
   private Trigger intakePanelReq;
+
   private Trigger scoreBallReq;
-  private Trigger scorePanelReq;
+
+  private Trigger scorePanelHighReq;
+  private Trigger scorePanelLowReq;
 
   private Trigger intakeBeambreakTrigger;
   private Trigger correctBallColorTrigger;
 
   private Trigger shooterBeambreakTrigger;
 
-  public Superstructure(CommandXboxController driver, CommandXboxController operator) {
+  public Superstructure(CommandXboxController driver, CommandXboxController operator, ArmSubsystem arm) {
+    this.arm = arm;
+
     intakeBallReq = driver.leftTrigger();
     intakePanelReq = driver.leftBumper();
 
     scoreBallReq = driver.rightTrigger();
+
+    // Call this after setting triggers
+    bindTransitions();
+  }
+
+  private void bindTransitions() {
+    bindTransition(State.IDLE, State.INTAKE_BALL, intakeBallReq);
+
+    bindTransition(
+      State.INTAKE_BALL, 
+      State.INDEX_BALL_1, 
+      intakeBallReq.negate()
+      .and(intakeBeambreakTrigger)
+      .and(correctBallColorTrigger)
+      .and(() -> prevState.hasNoBall())
+    );
+
+    bindTransition(
+      State.INTAKE_BALL,
+      prevState,
+      intakeBallReq.negate()
+        .and(intakeBeambreakTrigger)
+        .and(correctBallColorTrigger)
+        .and(() -> prevState.hasOneBall())
+    );
+
+    bindTransition(State.IDLE, State.INTAKE_PANEL, intakePanelReq);
+
+    bindTransition(State.INTAKE_PANEL, State.READY_PANEL, new Trigger(arm::hasPanel));
+
+    bindTransition(State.READY_PANEL, State.SCORE_PANEL_HIGH, scorePanelHighReq);
+
+    bindTransition(State.READY_PANEL, State.SCORE_PANEL_LOW, scorePanelLowReq);
+
+    bindTransition(State.SCORE_PANEL_HIGH, State.IDLE, new Trigger(arm::hasPanel).negate());
+
+    bindTransition(State.SCORE_PANEL_LOW, State.IDLE, new Trigger(arm::hasPanel).negate());
   }
 
   private void bindTransition(State from, State to, Trigger trigger) {
