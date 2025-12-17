@@ -44,11 +44,9 @@ public class Superstructure {
     SHOOT_BALL_2_WITH_PANEL(1, true),
 
     INTAKE_PANEL_WITH_BALL_1(1, false),
-    READY_PANEL_WITH_BALL_1(1, true),
     SCORE_PANEL_LOW_WITH_BALL_1(1, false),
     SCORE_PANEL_HIGH_WITH_BALL_1(1, false),
     INTAKE_PANEL_WITH_BALL_2(2, false),
-    READY_PANEL_WITH_BALL_2(2, true),
     SCORE_PANEL_LOW_WITH_BALL_2(2, false),
     SCORE_PANEL_HIGH_WITH_BALL_2(2, false),
     ;
@@ -125,9 +123,10 @@ public class Superstructure {
   }
 
   private void bindTransitions() {
-    bindTransition(State.IDLE, State.INTAKE_BALL_1, intakeBallReq);
 
     { // Ball states without panels
+      bindTransition(State.IDLE, State.INTAKE_BALL_1, intakeBallReq);
+
       bindTransition(
           State.INTAKE_BALL_1,
           State.INDEX_BALL_1,
@@ -180,18 +179,67 @@ public class Superstructure {
     }
 
     { // Ball states with panels
+      bindTransition(State.READY_PANEL, State.INTAKE_BALL_1_WITH_PANEL, intakeBallReq);
+
+      bindTransition(State.READY_BALL_1_WITH_PANEL, State.INTAKE_BALL_2_WITH_PANEL, intakeBallReq);
+
       bindTransition(
           State.INTAKE_BALL_1_WITH_PANEL,
           State.INDEX_BALL_1_WITH_PANEL,
           intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
 
       bindTransition(
+          State.INTAKE_BALL_1_WITH_PANEL,
+          State.REJECT_BALL_1_WITH_PANEL,
+          correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
+
+      bindTransition(
           State.INTAKE_BALL_2_WITH_PANEL,
           State.INDEX_BALL_2_WITH_PANEL,
           intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
+
+      bindTransition(
+          State.INTAKE_BALL_2_WITH_PANEL,
+          State.REJECT_BALL_2_WITH_PANEL,
+          correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
+
+      bindTransition(
+          State.REJECT_BALL_1_WITH_PANEL,
+          State.READY_PANEL,
+          intakeBeambreakTrigger.negate().debounce(1));
+
+      bindTransition(
+          State.REJECT_BALL_2_WITH_PANEL,
+          State.READY_BALL_1_WITH_PANEL,
+          intakeBeambreakTrigger.negate().debounce(1));
+
+      bindTransition(
+          State.INDEX_BALL_1_WITH_PANEL,
+          State.READY_BALL_1_WITH_PANEL,
+          shooterBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
+
+      bindTransition(
+          State.INDEX_BALL_2_WITH_PANEL,
+          State.READY_BALL_2_WITH_PANEL,
+          intakeBeambreakTrigger.negate()); // Assume it indexes properly (maybe add a delay)
+
+      bindTransition(State.READY_BALL_1_WITH_PANEL, State.SHOOT_BALL_1_WITH_PANEL, scoreBallReq);
+
+      bindTransition(
+          State.SHOOT_BALL_1_WITH_PANEL,
+          State.READY_PANEL,
+          shooterBeambreakTrigger.negate()); // TODO: Need to check this condition too...
+
+      bindTransition(State.READY_BALL_2_WITH_PANEL, State.SHOOT_BALL_2_WITH_PANEL, scoreBallReq);
+
+      // After it shoots, index the next one
+      bindTransition(
+          State.SHOOT_BALL_2_WITH_PANEL,
+          State.INDEX_BALL_1_WITH_PANEL,
+          shooterBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
     }
 
-    { // Panel states
+    { // Panel states without balls
       bindTransition(State.IDLE, State.INTAKE_PANEL, intakePanelReq);
 
       bindTransition(State.INTAKE_PANEL, State.READY_PANEL, arm::hasPanel);
@@ -203,6 +251,41 @@ public class Superstructure {
       bindTransition(State.SCORE_PANEL_HIGH, State.IDLE, () -> !arm.hasPanel());
 
       bindTransition(State.SCORE_PANEL_LOW, State.IDLE, () -> !arm.hasPanel());
+    }
+
+    { // Panel states with balls
+
+      // ---- WITH 1 BALL ----
+
+      bindTransition(State.READY_BALL_1, State.INTAKE_PANEL_WITH_BALL_1, intakePanelReq);
+
+      bindTransition(State.INTAKE_PANEL_WITH_BALL_1, State.READY_BALL_1_WITH_PANEL, arm::hasPanel);
+
+      bindTransition(
+          State.READY_BALL_1_WITH_PANEL, State.SCORE_PANEL_HIGH_WITH_BALL_1, scorePanelHighReq);
+
+      bindTransition(
+          State.READY_BALL_1_WITH_PANEL, State.SCORE_PANEL_LOW_WITH_BALL_1, scorePanelLowReq);
+
+      bindTransition(State.SCORE_PANEL_HIGH_WITH_BALL_1, State.READY_BALL_1, () -> !arm.hasPanel());
+
+      bindTransition(State.SCORE_PANEL_LOW_WITH_BALL_1, State.READY_BALL_1, () -> !arm.hasPanel());
+
+      // ---- WITH 2 BALLS ----
+
+      bindTransition(State.READY_BALL_2, State.INTAKE_PANEL_WITH_BALL_2, intakePanelReq);
+
+      bindTransition(State.INTAKE_PANEL_WITH_BALL_2, State.READY_BALL_2_WITH_PANEL, arm::hasPanel);
+
+      bindTransition(
+          State.READY_BALL_2_WITH_PANEL, State.SCORE_PANEL_HIGH_WITH_BALL_2, scorePanelHighReq);
+
+      bindTransition(
+          State.READY_BALL_2_WITH_PANEL, State.SCORE_PANEL_LOW_WITH_BALL_2, scorePanelLowReq);
+
+      bindTransition(State.SCORE_PANEL_HIGH_WITH_BALL_2, State.READY_BALL_2, () -> !arm.hasPanel());
+
+      bindTransition(State.SCORE_PANEL_LOW_WITH_BALL_2, State.READY_BALL_2, () -> !arm.hasPanel());
     }
   }
 
