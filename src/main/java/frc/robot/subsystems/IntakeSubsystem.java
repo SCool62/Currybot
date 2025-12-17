@@ -116,4 +116,8 @@ public class IntakeSubsystem extends SubsystemBase {
         // I think this would need tuning irl if this robot got built
         return (sensedColor.blue > BLUE_THRESHOLD_VALUE && alliance == Alliance.Blue) || (sensedColor.red > RED_THRESHOLD_VALUE && alliance == Alliance.Red);
     }
+
+    public boolean getBeambreakIsDetected() {
+        return canrangeIOInputs.isDetected;
+    }
 }

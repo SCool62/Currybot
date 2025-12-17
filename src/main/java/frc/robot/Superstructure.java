@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -78,6 +79,7 @@ public class Superstructure {
   }
 
   private final ArmSubsystem arm;
+  private final IntakeSubsystem intake;
 
   @AutoLogOutput(key = "Superstructure/State")
   private State state = State.IDLE;
@@ -100,13 +102,17 @@ public class Superstructure {
 
   private Trigger shooterBeambreakTrigger;
 
-  public Superstructure(CommandXboxController driver, CommandXboxController operator, ArmSubsystem arm) {
+  public Superstructure(CommandXboxController driver, CommandXboxController operator, ArmSubsystem arm, IntakeSubsystem intake) {
     this.arm = arm;
+    this.intake = intake;
 
     intakeBallReq = driver.leftTrigger();
     intakePanelReq = driver.leftBumper();
 
     scoreBallReq = driver.rightTrigger();
+
+    intakeBeambreakTrigger = new Trigger(intake::getBeambreakIsDetected);
+    correctBallColorTrigger = new Trigger(intake::sensedIsAllianceColor);
 
     // Call this after setting triggers
     bindTransitions();
