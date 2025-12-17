@@ -6,9 +6,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-
 import java.util.function.BooleanSupplier;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Superstructure {
@@ -150,24 +148,35 @@ public class Superstructure {
         State.REJECT_BALL_2,
         correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
 
-    bindTransition(
-      State.REJECT_BALL_1, State.IDLE, intakeBeambreakTrigger.negate().debounce(1));
+    bindTransition(State.REJECT_BALL_1, State.IDLE, intakeBeambreakTrigger.negate().debounce(1));
 
     bindTransition(
         State.REJECT_BALL_2, State.READY_BALL_1, intakeBeambreakTrigger.negate().debounce(1));
 
-    bindTransition(State.INDEX_BALL_1, State.READY_BALL_1, shooterBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
+    bindTransition(
+        State.INDEX_BALL_1,
+        State.READY_BALL_1,
+        shooterBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
 
-    bindTransition(State.INDEX_BALL_2, State.READY_BALL_2, intakeBeambreakTrigger.negate()); // Assume it indexes properly (maybe add a delay)
+    bindTransition(
+        State.INDEX_BALL_2,
+        State.READY_BALL_2,
+        intakeBeambreakTrigger.negate()); // Assume it indexes properly (maybe add a delay)
 
     bindTransition(State.READY_BALL_1, State.SHOOT_BALL_1, scoreBallReq);
 
-    bindTransition(State.SHOOT_BALL_1, State.IDLE, shooterBeambreakTrigger.negate()); // TODO: Need to check this condition too...
+    bindTransition(
+        State.SHOOT_BALL_1,
+        State.IDLE,
+        shooterBeambreakTrigger.negate()); // TODO: Need to check this condition too...
 
     bindTransition(State.READY_BALL_2, State.SHOOT_BALL_2, scoreBallReq);
 
     // After it shoots, index the next one
-    bindTransition(State.SHOOT_BALL_2, State.INDEX_BALL_1, shooterBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
+    bindTransition(
+        State.SHOOT_BALL_2,
+        State.INDEX_BALL_1,
+        shooterBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
 
     // If we had a panel
     bindTransition(
