@@ -83,6 +83,6 @@ public class PivotIOReal implements PivotIO {
 
   @Override
   public Rotation2d getSetpoint() {
-      return setpoint;
+    return setpoint;
   }
 }

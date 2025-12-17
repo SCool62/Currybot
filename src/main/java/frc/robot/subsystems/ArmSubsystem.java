@@ -21,10 +21,8 @@ import frc.robot.subsystems.roller.RollerIO;
 import frc.robot.subsystems.roller.RollerIOInputsAutoLogged;
 import frc.robot.subsystems.roller.RollerIOReal;
 import frc.robot.subsystems.roller.RollerIOSim;
-
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -39,6 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
   private PivotIOInputsAutoLogged pivotIOInputs = new PivotIOInputsAutoLogged();
 
   private LinearFilter rollerCurrentFilter = LinearFilter.movingAverage(10);
+
   @AutoLogOutput(key = "Arm/Roller/Current Filter Value")
   private double rollerCurrentFilterValue = 0.0;
 
@@ -79,9 +78,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     // Trigger that sets has panel if current threshold is reached
     new Trigger(() -> Math.abs(rollerCurrentFilterValue) > PANEL_CURRENT_THRESHOLD)
-      .debounce(0.25)
-      .onTrue(Commands.runOnce(() -> hasPanel = true))
-      .onFalse(Commands.runOnce(() -> hasPanel = false));
+        .debounce(0.25)
+        .onTrue(Commands.runOnce(() -> hasPanel = true))
+        .onFalse(Commands.runOnce(() -> hasPanel = false));
   }
 
   @Override
@@ -95,7 +94,6 @@ public class ArmSubsystem extends SubsystemBase {
     rollerCurrentFilterValue = rollerCurrentFilter.calculate(rollerIOInputs.statorCurrentAmps);
   }
 
-
   public Command setPivotSetpoint(Supplier<Rotation2d> position) {
     return this.run(() -> pivotIO.setPositionSetpoint(position.get()));
   }
@@ -104,11 +102,13 @@ public class ArmSubsystem extends SubsystemBase {
     return this.run(() -> rollerIO.setVoltage(voltage.getAsDouble()));
   }
 
-  public Command setPivotSetpointAndRollerVoltage(Supplier<Rotation2d> position, DoubleSupplier rollerVoltage) {
-    return this.run(() -> {
-        rollerIO.setVoltage(rollerVoltage.getAsDouble());
-        pivotIO.setPositionSetpoint(position.get());
-    });
+  public Command setPivotSetpointAndRollerVoltage(
+      Supplier<Rotation2d> position, DoubleSupplier rollerVoltage) {
+    return this.run(
+        () -> {
+          rollerIO.setVoltage(rollerVoltage.getAsDouble());
+          pivotIO.setPositionSetpoint(position.get());
+        });
   }
 
   public boolean atExtension(Rotation2d setpoint) {

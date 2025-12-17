@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Superstructure {
@@ -102,7 +101,11 @@ public class Superstructure {
 
   private Trigger shooterBeambreakTrigger;
 
-  public Superstructure(CommandXboxController driver, CommandXboxController operator, ArmSubsystem arm, IntakeSubsystem intake) {
+  public Superstructure(
+      CommandXboxController driver,
+      CommandXboxController operator,
+      ArmSubsystem arm,
+      IntakeSubsystem intake) {
     this.arm = arm;
     this.intake = intake;
 
@@ -123,45 +126,45 @@ public class Superstructure {
 
     // If we didn't have a panel
     bindTransition(
-      State.INTAKE_BALL, 
-      State.INDEX_BALL_1, 
-      intakeBallReq.negate()
-      .and(intakeBeambreakTrigger)
-      .and(correctBallColorTrigger)
-      .and(prevState::hasNoBall)
-      .and(() -> !prevState.hasPanel())
-    );
+        State.INTAKE_BALL,
+        State.INDEX_BALL_1,
+        intakeBallReq
+            .negate()
+            .and(intakeBeambreakTrigger)
+            .and(correctBallColorTrigger)
+            .and(prevState::hasNoBall)
+            .and(() -> !prevState.hasPanel()));
 
     bindTransition(
-      State.INTAKE_BALL,
-      State.INDEX_BALL_2,
-      intakeBallReq.negate()
-        .and(intakeBeambreakTrigger)
-        .and(correctBallColorTrigger)
-        .and(prevState::hasOneBall)
-        .and(() -> !prevState.hasPanel())
-    );
+        State.INTAKE_BALL,
+        State.INDEX_BALL_2,
+        intakeBallReq
+            .negate()
+            .and(intakeBeambreakTrigger)
+            .and(correctBallColorTrigger)
+            .and(prevState::hasOneBall)
+            .and(() -> !prevState.hasPanel()));
 
     // If we had a panel
     bindTransition(
-      State.INTAKE_BALL, 
-      State.INDEX_BALL_1_WITH_PANEL, 
-      intakeBallReq.negate()
-      .and(intakeBeambreakTrigger)
-      .and(correctBallColorTrigger)
-      .and(prevState::hasNoBall)
-      .and(prevState::hasPanel)
-    );
+        State.INTAKE_BALL,
+        State.INDEX_BALL_1_WITH_PANEL,
+        intakeBallReq
+            .negate()
+            .and(intakeBeambreakTrigger)
+            .and(correctBallColorTrigger)
+            .and(prevState::hasNoBall)
+            .and(prevState::hasPanel));
 
     bindTransition(
-      State.INTAKE_BALL,
-      State.INDEX_BALL_2_WITH_PANEL,
-      intakeBallReq.negate()
-        .and(intakeBeambreakTrigger)
-        .and(correctBallColorTrigger)
-        .and(prevState::hasOneBall)
-        .and(prevState::hasPanel)
-    );
+        State.INTAKE_BALL,
+        State.INDEX_BALL_2_WITH_PANEL,
+        intakeBallReq
+            .negate()
+            .and(intakeBeambreakTrigger)
+            .and(correctBallColorTrigger)
+            .and(prevState::hasOneBall)
+            .and(prevState::hasPanel));
 
     bindTransition(State.IDLE, State.INTAKE_PANEL, intakePanelReq);
 
