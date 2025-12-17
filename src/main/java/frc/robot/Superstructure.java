@@ -121,22 +121,46 @@ public class Superstructure {
   private void bindTransitions() {
     bindTransition(State.IDLE, State.INTAKE_BALL, intakeBallReq);
 
+    // If we didn't have a panel
     bindTransition(
       State.INTAKE_BALL, 
       State.INDEX_BALL_1, 
       intakeBallReq.negate()
       .and(intakeBeambreakTrigger)
       .and(correctBallColorTrigger)
-      .and(() -> prevState.hasNoBall())
+      .and(prevState::hasNoBall)
+      .and(() -> !prevState.hasPanel())
     );
 
     bindTransition(
       State.INTAKE_BALL,
-      prevState,
+      State.INDEX_BALL_2,
       intakeBallReq.negate()
         .and(intakeBeambreakTrigger)
         .and(correctBallColorTrigger)
-        .and(() -> prevState.hasOneBall())
+        .and(prevState::hasOneBall)
+        .and(() -> !prevState.hasPanel())
+    );
+
+    // If we had a panel
+    bindTransition(
+      State.INTAKE_BALL, 
+      State.INDEX_BALL_1_WITH_PANEL, 
+      intakeBallReq.negate()
+      .and(intakeBeambreakTrigger)
+      .and(correctBallColorTrigger)
+      .and(prevState::hasNoBall)
+      .and(prevState::hasPanel)
+    );
+
+    bindTransition(
+      State.INTAKE_BALL,
+      State.INDEX_BALL_2_WITH_PANEL,
+      intakeBallReq.negate()
+        .and(intakeBeambreakTrigger)
+        .and(correctBallColorTrigger)
+        .and(prevState::hasOneBall)
+        .and(prevState::hasPanel)
     );
 
     bindTransition(State.IDLE, State.INTAKE_PANEL, intakePanelReq);
