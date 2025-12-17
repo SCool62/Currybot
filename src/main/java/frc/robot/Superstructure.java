@@ -6,6 +6,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Superstructure {
@@ -13,7 +16,8 @@ public class Superstructure {
     IDLE(0, false),
 
     // Just balls
-    INTAKE_BALL(-1, false),
+    INTAKE_BALL_1(0, false),
+    INTAKE_BALL_2(1, false),
     REJECT_BALL_1(0, false),
     REJECT_BALL_2(1, false),
     INDEX_BALL_1(1, false),
@@ -30,7 +34,8 @@ public class Superstructure {
     SCORE_PANEL_HIGH(0, false),
 
     // Both balls and panels
-    INTAKE_BALL_WITH_PANEL(-1, true),
+    INTAKE_BALL_1_WITH_PANEL(0, true),
+    INTAKE_BALL_2_WITH_PANEL(1, true),
     REJECT_BALL_1_WITH_PANEL(0, true),
     REJECT_BALL_2_WITH_PANEL(1, true),
     INDEX_BALL_1_WITH_PANEL(1, true),
@@ -122,64 +127,75 @@ public class Superstructure {
   }
 
   private void bindTransitions() {
-    bindTransition(State.IDLE, State.INTAKE_BALL, intakeBallReq);
+    bindTransition(State.IDLE, State.INTAKE_BALL_1, intakeBallReq);
 
     // If we didn't have a panel
     bindTransition(
-        State.INTAKE_BALL,
+        State.INTAKE_BALL_1,
         State.INDEX_BALL_1,
-        intakeBallReq
-            .negate()
-            .and(intakeBeambreakTrigger)
-            .and(correctBallColorTrigger)
-            .and(prevState::hasNoBall)
-            .and(() -> !prevState.hasPanel()));
+        intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
 
     bindTransition(
-        State.INTAKE_BALL,
+        State.INTAKE_BALL_1,
+        State.REJECT_BALL_1,
+        correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
+
+    bindTransition(
+        State.INTAKE_BALL_2,
         State.INDEX_BALL_2,
-        intakeBallReq
-            .negate()
-            .and(intakeBeambreakTrigger)
-            .and(correctBallColorTrigger)
-            .and(prevState::hasOneBall)
-            .and(() -> !prevState.hasPanel()));
+        intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
+
+    bindTransition(
+        State.INTAKE_BALL_2,
+        State.REJECT_BALL_2,
+        correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
+
+    bindTransition(
+      State.REJECT_BALL_1, State.IDLE, intakeBeambreakTrigger.negate().debounce(1));
+
+    bindTransition(
+        State.REJECT_BALL_2, State.READY_BALL_1, intakeBeambreakTrigger.negate().debounce(1));
+
+    bindTransition(State.INDEX_BALL_1, State.READY_BALL_1, shooterBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
+
+    bindTransition(State.INDEX_BALL_2, State.READY_BALL_2, intakeBeambreakTrigger.negate()); // Assume it indexes properly (maybe add a delay)
+
+    bindTransition(State.READY_BALL_1, State.SHOOT_BALL_1, scoreBallReq);
+
+    bindTransition(State.SHOOT_BALL_1, State.IDLE, shooterBeambreakTrigger.negate()); // TODO: Need to check this condition too...
+
+    bindTransition(State.READY_BALL_2, State.SHOOT_BALL_2, scoreBallReq);
+
+    // After it shoots, index the next one
+    bindTransition(State.SHOOT_BALL_2, State.INDEX_BALL_1, shooterBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
 
     // If we had a panel
     bindTransition(
-        State.INTAKE_BALL,
+        State.INTAKE_BALL_1_WITH_PANEL,
         State.INDEX_BALL_1_WITH_PANEL,
-        intakeBallReq
-            .negate()
-            .and(intakeBeambreakTrigger)
-            .and(correctBallColorTrigger)
-            .and(prevState::hasNoBall)
-            .and(prevState::hasPanel));
+        intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
 
     bindTransition(
-        State.INTAKE_BALL,
+        State.INTAKE_BALL_2_WITH_PANEL,
         State.INDEX_BALL_2_WITH_PANEL,
-        intakeBallReq
-            .negate()
-            .and(intakeBeambreakTrigger)
-            .and(correctBallColorTrigger)
-            .and(prevState::hasOneBall)
-            .and(prevState::hasPanel));
+        intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
 
+    // ------- PANEL STATES -----------
     bindTransition(State.IDLE, State.INTAKE_PANEL, intakePanelReq);
 
-    bindTransition(State.INTAKE_PANEL, State.READY_PANEL, new Trigger(arm::hasPanel));
+    bindTransition(State.INTAKE_PANEL, State.READY_PANEL, arm::hasPanel);
 
     bindTransition(State.READY_PANEL, State.SCORE_PANEL_HIGH, scorePanelHighReq);
 
     bindTransition(State.READY_PANEL, State.SCORE_PANEL_LOW, scorePanelLowReq);
 
-    bindTransition(State.SCORE_PANEL_HIGH, State.IDLE, new Trigger(arm::hasPanel).negate());
+    bindTransition(State.SCORE_PANEL_HIGH, State.IDLE, () -> !arm.hasPanel());
 
-    bindTransition(State.SCORE_PANEL_LOW, State.IDLE, new Trigger(arm::hasPanel).negate());
+    bindTransition(State.SCORE_PANEL_LOW, State.IDLE, () -> !arm.hasPanel());
   }
 
-  private void bindTransition(State from, State to, Trigger trigger) {
+  // Don't need an overload because Triggers are BooleanSuppliers
+  private void bindTransition(State from, State to, BooleanSupplier trigger) {
     new Trigger(() -> state.equals(from)).and(trigger).onTrue(changeStateTo(to));
   }
 
