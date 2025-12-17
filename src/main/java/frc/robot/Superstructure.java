@@ -127,80 +127,83 @@ public class Superstructure {
   private void bindTransitions() {
     bindTransition(State.IDLE, State.INTAKE_BALL_1, intakeBallReq);
 
-    // If we didn't have a panel
-    bindTransition(
-        State.INTAKE_BALL_1,
-        State.INDEX_BALL_1,
-        intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
+    { // Ball states without panels
+      bindTransition(
+          State.INTAKE_BALL_1,
+          State.INDEX_BALL_1,
+          intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
 
-    bindTransition(
-        State.INTAKE_BALL_1,
-        State.REJECT_BALL_1,
-        correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
+      bindTransition(
+          State.INTAKE_BALL_1,
+          State.REJECT_BALL_1,
+          correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
 
-    bindTransition(
-        State.INTAKE_BALL_2,
-        State.INDEX_BALL_2,
-        intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
+      bindTransition(
+          State.INTAKE_BALL_2,
+          State.INDEX_BALL_2,
+          intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
 
-    bindTransition(
-        State.INTAKE_BALL_2,
-        State.REJECT_BALL_2,
-        correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
+      bindTransition(
+          State.INTAKE_BALL_2,
+          State.REJECT_BALL_2,
+          correctBallColorTrigger.negate().and(intakeBeambreakTrigger));
 
-    bindTransition(State.REJECT_BALL_1, State.IDLE, intakeBeambreakTrigger.negate().debounce(1));
+      bindTransition(State.REJECT_BALL_1, State.IDLE, intakeBeambreakTrigger.negate().debounce(1));
 
-    bindTransition(
-        State.REJECT_BALL_2, State.READY_BALL_1, intakeBeambreakTrigger.negate().debounce(1));
+      bindTransition(
+          State.REJECT_BALL_2, State.READY_BALL_1, intakeBeambreakTrigger.negate().debounce(1));
 
-    bindTransition(
-        State.INDEX_BALL_1,
-        State.READY_BALL_1,
-        shooterBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
+      bindTransition(
+          State.INDEX_BALL_1,
+          State.READY_BALL_1,
+          shooterBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
 
-    bindTransition(
-        State.INDEX_BALL_2,
-        State.READY_BALL_2,
-        intakeBeambreakTrigger.negate()); // Assume it indexes properly (maybe add a delay)
+      bindTransition(
+          State.INDEX_BALL_2,
+          State.READY_BALL_2,
+          intakeBeambreakTrigger.negate()); // Assume it indexes properly (maybe add a delay)
 
-    bindTransition(State.READY_BALL_1, State.SHOOT_BALL_1, scoreBallReq);
+      bindTransition(State.READY_BALL_1, State.SHOOT_BALL_1, scoreBallReq);
 
-    bindTransition(
-        State.SHOOT_BALL_1,
-        State.IDLE,
-        shooterBeambreakTrigger.negate()); // TODO: Need to check this condition too...
+      bindTransition(
+          State.SHOOT_BALL_1,
+          State.IDLE,
+          shooterBeambreakTrigger.negate()); // TODO: Need to check this condition too...
 
-    bindTransition(State.READY_BALL_2, State.SHOOT_BALL_2, scoreBallReq);
+      bindTransition(State.READY_BALL_2, State.SHOOT_BALL_2, scoreBallReq);
 
-    // After it shoots, index the next one
-    bindTransition(
-        State.SHOOT_BALL_2,
-        State.INDEX_BALL_1,
-        shooterBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
+      // After it shoots, index the next one
+      bindTransition(
+          State.SHOOT_BALL_2,
+          State.INDEX_BALL_1,
+          shooterBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
+    }
 
-    // If we had a panel
-    bindTransition(
-        State.INTAKE_BALL_1_WITH_PANEL,
-        State.INDEX_BALL_1_WITH_PANEL,
-        intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
+    { // Ball states with panels
+      bindTransition(
+          State.INTAKE_BALL_1_WITH_PANEL,
+          State.INDEX_BALL_1_WITH_PANEL,
+          intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
 
-    bindTransition(
-        State.INTAKE_BALL_2_WITH_PANEL,
-        State.INDEX_BALL_2_WITH_PANEL,
-        intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
+      bindTransition(
+          State.INTAKE_BALL_2_WITH_PANEL,
+          State.INDEX_BALL_2_WITH_PANEL,
+          intakeBallReq.negate().and(intakeBeambreakTrigger).and(correctBallColorTrigger));
+    }
 
-    // ------- PANEL STATES -----------
-    bindTransition(State.IDLE, State.INTAKE_PANEL, intakePanelReq);
+    { // Panel states
+      bindTransition(State.IDLE, State.INTAKE_PANEL, intakePanelReq);
 
-    bindTransition(State.INTAKE_PANEL, State.READY_PANEL, arm::hasPanel);
+      bindTransition(State.INTAKE_PANEL, State.READY_PANEL, arm::hasPanel);
 
-    bindTransition(State.READY_PANEL, State.SCORE_PANEL_HIGH, scorePanelHighReq);
+      bindTransition(State.READY_PANEL, State.SCORE_PANEL_HIGH, scorePanelHighReq);
 
-    bindTransition(State.READY_PANEL, State.SCORE_PANEL_LOW, scorePanelLowReq);
+      bindTransition(State.READY_PANEL, State.SCORE_PANEL_LOW, scorePanelLowReq);
 
-    bindTransition(State.SCORE_PANEL_HIGH, State.IDLE, () -> !arm.hasPanel());
+      bindTransition(State.SCORE_PANEL_HIGH, State.IDLE, () -> !arm.hasPanel());
 
-    bindTransition(State.SCORE_PANEL_LOW, State.IDLE, () -> !arm.hasPanel());
+      bindTransition(State.SCORE_PANEL_LOW, State.IDLE, () -> !arm.hasPanel());
+    }
   }
 
   // Don't need an overload because Triggers are BooleanSuppliers
