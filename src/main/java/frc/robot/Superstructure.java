@@ -291,6 +291,7 @@ public class Superstructure {
 
   // Don't need an overload because Triggers are BooleanSuppliers
   private void bindTransition(State from, State to, BooleanSupplier trigger) {
+    // When the state is the state we're transitioning from, and the trigger is true, change the state
     new Trigger(() -> state.equals(from)).and(trigger).onTrue(changeStateTo(to));
   }
 
