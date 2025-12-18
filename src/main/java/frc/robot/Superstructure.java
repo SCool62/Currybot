@@ -91,7 +91,6 @@ public class Superstructure {
   private State prevState = State.IDLE;
 
   // Triggers
-  // TODO: SET THESE
   private Trigger intakeBallReq;
   private Trigger intakePanelReq;
 

@@ -9,6 +9,12 @@ import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.RoutingSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.util.CommandXboxControllerSubsystem;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -40,6 +46,16 @@ public class Robot extends LoggedRobot {
   public static final RobotType ROBOT_TYPE = Robot.isReal() ? RobotType.REAL : RobotType.SIM;
 
   private final CANBus canivore = new CANBus("*");
+
+  private final ArmSubsystem arm = new ArmSubsystem();
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final RoutingSubsystem routing = new RoutingSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
+
+  private final CommandXboxControllerSubsystem driver = new CommandXboxControllerSubsystem(0);
+  private final CommandXboxControllerSubsystem operator = new CommandXboxControllerSubsystem(1);
+
+  private final Superstructure superstructure = new Superstructure(driver, operator, arm, intake, routing);
 
   public Robot() {
     DriverStation.silenceJoystickConnectionWarning(true);
