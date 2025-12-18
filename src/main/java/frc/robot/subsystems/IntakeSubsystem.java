@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -69,15 +68,15 @@ public class IntakeSubsystem extends SubsystemBase {
       colorSensorIO = new RevColorSensorV3IOReal(Port.kOnboard);
     } else {
       // TODO: ACTUAL VALUES
-      pivotIO = new PivotIOSim(
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0, 
-        new ProfiledPIDController(0.0, 0.0, 0.0, new Constraints(0.0, 0.0)), 
-        new ArmFeedforward(0.0, 0.0, 0.0)
-      );
+      pivotIO =
+          new PivotIOSim(
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              new ProfiledPIDController(0.0, 0.0, 0.0, new Constraints(0.0, 0.0)),
+              new ArmFeedforward(0.0, 0.0, 0.0));
 
       // TODO: ACTUAL VALUES
       fourbarRollerIO =

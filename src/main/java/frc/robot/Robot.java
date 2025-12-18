@@ -14,7 +14,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RoutingSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.util.CommandXboxControllerSubsystem;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -55,7 +54,8 @@ public class Robot extends LoggedRobot {
   private final CommandXboxControllerSubsystem driver = new CommandXboxControllerSubsystem(0);
   private final CommandXboxControllerSubsystem operator = new CommandXboxControllerSubsystem(1);
 
-  private final Superstructure superstructure = new Superstructure(driver, operator, arm, intake, routing);
+  private final Superstructure superstructure =
+      new Superstructure(driver, operator, arm, intake, routing);
 
   public Robot() {
     DriverStation.silenceJoystickConnectionWarning(true);
