@@ -2,6 +2,8 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -12,7 +14,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
   public ElevatorSubsystem() {
-    this.io = new ElevatorIOSim();
+    if (Robot.ROBOT_TYPE.isReal()) {
+      io = new ElevatorIOReal();
+    } else {
+      io = new ElevatorIOSim();
+    }
   }
 
   @Override
