@@ -29,11 +29,15 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.leaderVoltage = currentAppliedVoltage;
     inputs.leaderStatorCurrentAmps = physicsSim.getCurrentDrawAmps();
     inputs.leaderVelocityMetersPerSec = physicsSim.getVelocityMetersPerSecond();
+    inputs.leaderSupplyCurrentAmps = Double.NEGATIVE_INFINITY;
+    inputs.leaderTempC = Double.NEGATIVE_INFINITY;
 
     inputs.followerPositionMeters = inputs.leaderPositionMeters;
     inputs.followerVoltage = inputs.leaderVoltage;
     inputs.followerStatorCurrentAmps = inputs.leaderStatorCurrentAmps;
     inputs.followerVelocityMetersPerSec = inputs.leaderVelocityMetersPerSec;
+    inputs.followerSupplyCurrentAmps = Double.NEGATIVE_INFINITY;
+    inputs.followerTempC = Double.NEGATIVE_INFINITY;
   }
 
   @Override

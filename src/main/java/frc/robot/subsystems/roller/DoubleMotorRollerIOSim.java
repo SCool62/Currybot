@@ -50,8 +50,8 @@ public class DoubleMotorRollerIOSim implements RollerIO {
     inputs.velocityRotationsPerSecond = physicsSim.getAngularVelocity().in(RotationsPerSecond);
     inputs.voltage = physicsSim.getInputVoltage();
     inputs.statorCurrentAmps = physicsSim.getCurrentDrawAmps();
-    inputs.supplyCurrentAmps = -1;
-    inputs.tempC = -1;
+    inputs.supplyCurrentAmps = Double.NEGATIVE_INFINITY;
+    inputs.tempC = Double.NEGATIVE_INFINITY;
   }
 
   @Override

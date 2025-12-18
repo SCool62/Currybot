@@ -62,8 +62,8 @@ public class PivotIOSim implements PivotIO {
         RadiansPerSecond.of(physicsSim.getVelocityRadPerSec()).in(RotationsPerSecond);
     inputs.voltage = appliedVoltage;
     inputs.statorCurrentAmps = physicsSim.getCurrentDrawAmps();
-    inputs.supplyCurrentAmps = 0.0;
-    inputs.tempC = 0.0;
+    inputs.supplyCurrentAmps = Double.NEGATIVE_INFINITY;
+    inputs.tempC = Double.NEGATIVE_INFINITY;
   }
 
   @Override
