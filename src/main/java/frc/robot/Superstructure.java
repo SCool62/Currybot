@@ -100,7 +100,7 @@ public class Superstructure {
   private Trigger intakeBeambreakTrigger;
   private Trigger correctBallColorTrigger;
 
-  private Trigger shooterBeambreakTrigger;
+  private Trigger routingIndexerBeambreakTrigger;
 
   public Superstructure(
       CommandXboxController driver,
@@ -155,7 +155,7 @@ public class Superstructure {
       bindTransition(
           State.INDEX_BALL_1,
           State.READY_BALL_1,
-          shooterBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
+          routingIndexerBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
 
       bindTransition(
           State.INDEX_BALL_2,
@@ -167,7 +167,7 @@ public class Superstructure {
       bindTransition(
           State.SHOOT_BALL_1,
           State.IDLE,
-          shooterBeambreakTrigger.negate()); // TODO: Need to check this condition too...
+          routingIndexerBeambreakTrigger.negate()); // TODO: Need to check this condition too...
 
       bindTransition(State.READY_BALL_2, State.SHOOT_BALL_2, scoreBallReq);
 
@@ -175,7 +175,7 @@ public class Superstructure {
       bindTransition(
           State.SHOOT_BALL_2,
           State.INDEX_BALL_1,
-          shooterBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
+          routingIndexerBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
     }
 
     { // Ball states with panels
@@ -216,7 +216,7 @@ public class Superstructure {
       bindTransition(
           State.INDEX_BALL_1_WITH_PANEL,
           State.READY_BALL_1_WITH_PANEL,
-          shooterBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
+          routingIndexerBeambreakTrigger); // TODO: IS THIS THE RIGHT CONDITION?
 
       bindTransition(
           State.INDEX_BALL_2_WITH_PANEL,
@@ -228,7 +228,7 @@ public class Superstructure {
       bindTransition(
           State.SHOOT_BALL_1_WITH_PANEL,
           State.READY_PANEL,
-          shooterBeambreakTrigger.negate()); // TODO: Need to check this condition too...
+          routingIndexerBeambreakTrigger.negate()); // TODO: Need to check this condition too...
 
       bindTransition(State.READY_BALL_2_WITH_PANEL, State.SHOOT_BALL_2_WITH_PANEL, scoreBallReq);
 
@@ -236,7 +236,7 @@ public class Superstructure {
       bindTransition(
           State.SHOOT_BALL_2_WITH_PANEL,
           State.INDEX_BALL_1_WITH_PANEL,
-          shooterBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
+          routingIndexerBeambreakTrigger.negate()); // TODO: CORRECT CONDITION?
     }
 
     { // Panel states without balls
