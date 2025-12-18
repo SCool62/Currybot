@@ -64,7 +64,7 @@ public class RoutingSubsystem extends SubsystemBase {
                 new PIDController(0, 0, 0)
             );
 
-            canRangeIO = new CANRangeIOSim(0, null);
+            canRangeIO = new CANRangeIOSim(0, canRangeConfig);
         }
     }
 

@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -19,6 +21,10 @@ import frc.robot.subsystems.canrange.CANRangeIOSim;
 import frc.robot.subsystems.colorsensor.ColorSensorIO;
 import frc.robot.subsystems.colorsensor.ColorSensorIOInputsAutoLogged;
 import frc.robot.subsystems.colorsensor.RevColorSensorV3IOReal;
+import frc.robot.subsystems.pivot.PivotIO;
+import frc.robot.subsystems.pivot.PivotIOInputsAutoLogged;
+import frc.robot.subsystems.pivot.PivotIOReal;
+import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.roller.RollerIO;
 import frc.robot.subsystems.roller.RollerIOInputsAutoLogged;
 import frc.robot.subsystems.roller.RollerIOReal;
@@ -28,6 +34,9 @@ import org.littletonrobotics.junction.Logger;
 public class IntakeSubsystem extends SubsystemBase {
   public static final double BLUE_THRESHOLD_VALUE = 100;
   public static final double RED_THRESHOLD_VALUE = 100;
+
+  private final PivotIO pivotIO;
+  private PivotIOInputsAutoLogged pivotIOInputs = new PivotIOInputsAutoLogged();
 
   private final RollerIO fourbarRollerIO;
   private RollerIOInputsAutoLogged fourbarRollerIOInputs = new RollerIOInputsAutoLogged();
@@ -44,6 +53,9 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem() {
     CANrangeConfiguration canrangeConfig = new CANrangeConfiguration();
     if (Robot.ROBOT_TYPE.isReal()) {
+      TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
+      pivotIO = new PivotIOReal(0, pivotConfig);
+
       // Could set these configs up. Should I or is it not worth it?
       TalonFXConfiguration fourbarRollerConfig = new TalonFXConfiguration();
       fourbarRollerIO = new RollerIOReal(0, fourbarRollerConfig);
@@ -56,6 +68,17 @@ public class IntakeSubsystem extends SubsystemBase {
       // Onboard I2C
       colorSensorIO = new RevColorSensorV3IOReal(Port.kOnboard);
     } else {
+      // TODO: ACTUAL VALUES
+      pivotIO = new PivotIOSim(
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0, 
+        new ProfiledPIDController(0.0, 0.0, 0.0, new Constraints(0.0, 0.0)), 
+        new ArmFeedforward(0.0, 0.0, 0.0)
+      );
+
       // TODO: ACTUAL VALUES
       fourbarRollerIO =
           new RollerIOSim(
