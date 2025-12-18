@@ -79,4 +79,8 @@ public class RoutingSubsystem extends SubsystemBase {
         canRangeIO.updateInputs(canRangeIOInputs);
         Logger.processInputs("Routing/CANrange", canRangeIOInputs);
     }
+
+    public boolean getCANrangeIsDetected() {
+        return canRangeIOInputs.isDetected;
+    }
 }
