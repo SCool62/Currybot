@@ -30,6 +30,23 @@ public class ArmSubsystem extends SubsystemBase {
 
   public static final double PANEL_CURRENT_THRESHOLD = 80.0;
 
+  public enum ArmState {
+    // The roller voltage numbers are largly arbitrary, but + is towards the robot and - is away
+    // Arm positions estimated from CAD with 0 at straight vertical 
+    IDLE(Rotation2d.kZero, 0.0),
+
+    INTAKE_PANEL(Rotation2d.fromDegrees(99.57), 7.0),
+    READY_PANEL(Rotation2d.kZero, 3.0);
+
+    final Rotation2d positionSetpoint;
+    final double rollerVoltage;
+
+    private ArmState(Rotation2d positionSetpoint, double rollerVoltage) {
+      this.positionSetpoint = positionSetpoint;
+      this.rollerVoltage = rollerVoltage;
+    }
+  }
+
   private final RollerIO rollerIO;
   private RollerIOInputsAutoLogged rollerIOInputs = new RollerIOInputsAutoLogged();
 
@@ -109,6 +126,10 @@ public class ArmSubsystem extends SubsystemBase {
           rollerIO.setVoltage(rollerVoltage.getAsDouble());
           pivotIO.setPositionSetpoint(position.get());
         });
+  }
+
+  public Command setStateAngleVoltage(Supplier<ArmState> stateSupplier) {
+    return setPivotSetpointAndRollerVoltage(() -> stateSupplier.get().positionSetpoint, () -> stateSupplier.get().rollerVoltage);
   }
 
   public boolean atExtension(Rotation2d setpoint) {
