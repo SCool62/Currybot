@@ -36,7 +36,10 @@ public class ArmSubsystem extends SubsystemBase {
     IDLE(Rotation2d.kZero, 0.0),
 
     INTAKE_PANEL(Rotation2d.fromDegrees(99.57), 7.0),
-    READY_PANEL(Rotation2d.kZero, 3.0);
+    // Could figure out angles for the rest of these but i'm lazy
+    READY_PANEL(Rotation2d.kZero, 3.0),
+    SCORE_PANEL(Rotation2d.kZero, -5);
+
 
     final Rotation2d positionSetpoint;
     final double rollerVoltage;

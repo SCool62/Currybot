@@ -103,6 +103,10 @@ public class Robot extends LoggedRobot {
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
     // be added.
 
+
+    // Defualt commands bound to use superstructure
+    arm.setDefaultCommand(arm.setStateAngleVoltage(() -> superstructure.getState().getArmState()));
+    elevator.setDefaultCommand(elevator.setStateExtension(() -> superstructure.getState().getElevatorState()));
   }
 
   @Override

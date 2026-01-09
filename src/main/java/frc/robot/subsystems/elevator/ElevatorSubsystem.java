@@ -23,7 +23,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public enum ElevatorState {
     IDLE(0.0),
-    INTAKE_PANEL(Inch.of(0.47));
+    INTAKE_PANEL(Inch.of(0.47)),
+    // Placeholder extensions
+    READY_PANEL(0.0),
+    SCORE_PANEL_LOW(Inch.of(6)),
+    SCORE_PANEL_HIGH(Inch.of(12));
 
     final double extensionMeters;
 

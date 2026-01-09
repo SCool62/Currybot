@@ -7,59 +7,66 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RoutingSubsystem;
+import frc.robot.subsystems.ArmSubsystem.ArmState;
+import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
+
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Superstructure {
   public static enum State {
-    IDLE(0, false),
+    IDLE(0, false, ArmState.IDLE, ElevatorState.IDLE),
 
     // Just balls
-    INTAKE_BALL_1(0, false),
-    INTAKE_BALL_2(1, false),
-    REJECT_BALL_1(0, false),
-    REJECT_BALL_2(1, false),
-    INDEX_BALL_1(1, false),
-    INDEX_BALL_2(2, false),
-    READY_BALL_1(1, false),
-    READY_BALL_2(2, false),
-    SHOOT_BALL_1(0, false),
-    SHOOT_BALL_2(1, false),
+    INTAKE_BALL_1(0, false, ArmState.IDLE, ElevatorState.IDLE),
+    INTAKE_BALL_2(1, false, ArmState.IDLE, ElevatorState.IDLE),
+    REJECT_BALL_1(0, false, ArmState.IDLE, ElevatorState.IDLE),
+    REJECT_BALL_2(1, false, ArmState.IDLE, ElevatorState.IDLE),
+    INDEX_BALL_1(1, false, ArmState.IDLE, ElevatorState.IDLE),
+    INDEX_BALL_2(2, false, ArmState.IDLE, ElevatorState.IDLE),
+    READY_BALL_1(1, false, ArmState.IDLE, ElevatorState.IDLE),
+    READY_BALL_2(2, false, ArmState.IDLE, ElevatorState.IDLE),
+    SHOOT_BALL_1(0, false, ArmState.IDLE, ElevatorState.IDLE),
+    SHOOT_BALL_2(1, false, ArmState.IDLE, ElevatorState.IDLE),
 
     // Just panels
-    INTAKE_PANEL(0, false),
-    READY_PANEL(0, true),
-    SCORE_PANEL_LOW(0, false),
-    SCORE_PANEL_HIGH(0, false),
+    INTAKE_PANEL(0, false, ArmState.INTAKE_PANEL, ElevatorState.INTAKE_PANEL),
+    READY_PANEL(0, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    SCORE_PANEL_LOW(0, false, ArmState.SCORE_PANEL, ElevatorState.SCORE_PANEL_LOW),
+    SCORE_PANEL_HIGH(0, false, ArmState.SCORE_PANEL, ElevatorState.SCORE_PANEL_HIGH),
 
     // Both balls and panels
-    INTAKE_BALL_1_WITH_PANEL(0, true),
-    INTAKE_BALL_2_WITH_PANEL(1, true),
-    REJECT_BALL_1_WITH_PANEL(0, true),
-    REJECT_BALL_2_WITH_PANEL(1, true),
-    INDEX_BALL_1_WITH_PANEL(1, true),
-    INDEX_BALL_2_WITH_PANEL(2, true),
-    READY_BALL_1_WITH_PANEL(1, true),
-    READY_BALL_2_WITH_PANEL(2, true),
-    SHOOT_BALL_1_WITH_PANEL(0, true),
-    SHOOT_BALL_2_WITH_PANEL(1, true),
+    INTAKE_BALL_1_WITH_PANEL(0, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    INTAKE_BALL_2_WITH_PANEL(1, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    REJECT_BALL_1_WITH_PANEL(0, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    REJECT_BALL_2_WITH_PANEL(1, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    INDEX_BALL_1_WITH_PANEL(1, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    INDEX_BALL_2_WITH_PANEL(2, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    READY_BALL_1_WITH_PANEL(1, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    READY_BALL_2_WITH_PANEL(2, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    SHOOT_BALL_1_WITH_PANEL(0, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
+    SHOOT_BALL_2_WITH_PANEL(1, true, ArmState.READY_PANEL, ElevatorState.READY_PANEL),
 
-    INTAKE_PANEL_WITH_BALL_1(1, false),
-    SCORE_PANEL_LOW_WITH_BALL_1(1, false),
-    SCORE_PANEL_HIGH_WITH_BALL_1(1, false),
-    INTAKE_PANEL_WITH_BALL_2(2, false),
-    SCORE_PANEL_LOW_WITH_BALL_2(2, false),
-    SCORE_PANEL_HIGH_WITH_BALL_2(2, false),
+    INTAKE_PANEL_WITH_BALL_1(1, false, ArmState.INTAKE_PANEL, ElevatorState.INTAKE_PANEL),
+    SCORE_PANEL_LOW_WITH_BALL_1(1, false, ArmState.SCORE_PANEL, ElevatorState.SCORE_PANEL_LOW),
+    SCORE_PANEL_HIGH_WITH_BALL_1(1, false, ArmState.SCORE_PANEL, ElevatorState.SCORE_PANEL_HIGH),
+    INTAKE_PANEL_WITH_BALL_2(2, false, ArmState.INTAKE_PANEL, ElevatorState.INTAKE_PANEL),
+    SCORE_PANEL_LOW_WITH_BALL_2(2, false, ArmState.SCORE_PANEL, ElevatorState.SCORE_PANEL_LOW),
+    SCORE_PANEL_HIGH_WITH_BALL_2(2, false, ArmState.SCORE_PANEL, ElevatorState.SCORE_PANEL_HIGH),
     ;
     // TODO: ADD MECH SPECIFIC STATES
 
     private final int numBalls;
     private final boolean hasPanel;
+    private final ArmState armState;
+    private final ElevatorState elevatorState;
 
     // Put -1 for unknown amount of balls
-    private State(int numBalls, boolean hasPanel) {
+    private State(int numBalls, boolean hasPanel, ArmState armState, ElevatorState elevatorState) {
       this.numBalls = numBalls;
       this.hasPanel = hasPanel;
+      this.armState = armState;
+      this.elevatorState = elevatorState;
     }
 
     public boolean hasNoBall() {
@@ -76,6 +83,14 @@ public class Superstructure {
 
     public boolean hasPanel() {
       return hasPanel;
+    }
+
+    public ArmState getArmState() {
+      return armState;
+    }
+
+    public ElevatorState getElevatorState() {
+      return elevatorState;
     }
   }
 
@@ -309,5 +324,9 @@ public class Superstructure {
           this.prevState = this.state;
           this.state = newState;
         });
+  }
+
+  public State getState() {
+    return state;
   }
 }
