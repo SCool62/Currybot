@@ -8,6 +8,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RoutingSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
 
 import java.util.function.BooleanSupplier;
@@ -118,12 +119,16 @@ public class Superstructure {
 
   private Trigger routingIndexerBeambreakTrigger;
 
+  @AutoLogOutput(key = "Superstructure/At Extension")
+  private Trigger atExtensionTrigger;
+
   public Superstructure(
       CommandXboxController driver,
       CommandXboxController operator,
       ArmSubsystem arm,
       IntakeSubsystem intake,
-      RoutingSubsystem routing) {
+      RoutingSubsystem routing,
+      ElevatorSubsystem elevator) {
     this.arm = arm;
     this.intake = intake;
     this.routing = routing;
@@ -137,6 +142,9 @@ public class Superstructure {
     correctBallColorTrigger = new Trigger(intake::sensedIsAllianceColor);
 
     routingIndexerBeambreakTrigger = new Trigger(routing::getCANrangeIsDetected);
+
+    // TODO: ADD REST OF MECHS TO THIS TRIGGER
+    atExtensionTrigger = new Trigger(arm::atExtension).and(elevator::atExtension);
 
     // Call this after setting triggers
     bindTransitions();
@@ -182,14 +190,14 @@ public class Superstructure {
           State.READY_BALL_2,
           intakeBeambreakTrigger.negate()); // Assume it indexes properly (maybe add a delay)
 
-      bindTransition(State.READY_BALL_1, State.SHOOT_BALL_1, scoreBallReq);
+      bindTransition(State.READY_BALL_1, State.SHOOT_BALL_1, scoreBallReq.and(atExtensionTrigger));
 
       bindTransition(
           State.SHOOT_BALL_1,
           State.IDLE,
           routingIndexerBeambreakTrigger.negate()); // TODO: Need to check this condition too...
 
-      bindTransition(State.READY_BALL_2, State.SHOOT_BALL_2, scoreBallReq);
+      bindTransition(State.READY_BALL_2, State.SHOOT_BALL_2, scoreBallReq.and(atExtensionTrigger));
 
       // After it shoots, index the next one
       bindTransition(
@@ -243,14 +251,14 @@ public class Superstructure {
           State.READY_BALL_2_WITH_PANEL,
           intakeBeambreakTrigger.negate()); // Assume it indexes properly (maybe add a delay)
 
-      bindTransition(State.READY_BALL_1_WITH_PANEL, State.SHOOT_BALL_1_WITH_PANEL, scoreBallReq);
+      bindTransition(State.READY_BALL_1_WITH_PANEL, State.SHOOT_BALL_1_WITH_PANEL, scoreBallReq.and(atExtensionTrigger));
 
       bindTransition(
           State.SHOOT_BALL_1_WITH_PANEL,
           State.READY_PANEL,
           routingIndexerBeambreakTrigger.negate()); // TODO: Need to check this condition too...
 
-      bindTransition(State.READY_BALL_2_WITH_PANEL, State.SHOOT_BALL_2_WITH_PANEL, scoreBallReq);
+      bindTransition(State.READY_BALL_2_WITH_PANEL, State.SHOOT_BALL_2_WITH_PANEL, scoreBallReq.and(atExtensionTrigger));
 
       // After it shoots, index the next one
       bindTransition(
@@ -264,9 +272,9 @@ public class Superstructure {
 
       bindTransition(State.INTAKE_PANEL, State.READY_PANEL, arm::hasPanel);
 
-      bindTransition(State.READY_PANEL, State.SCORE_PANEL_HIGH, scorePanelHighReq);
+      bindTransition(State.READY_PANEL, State.SCORE_PANEL_HIGH, scorePanelHighReq.and(atExtensionTrigger));
 
-      bindTransition(State.READY_PANEL, State.SCORE_PANEL_LOW, scorePanelLowReq);
+      bindTransition(State.READY_PANEL, State.SCORE_PANEL_LOW, scorePanelLowReq.and(atExtensionTrigger));
 
       bindTransition(State.SCORE_PANEL_HIGH, State.IDLE, () -> !arm.hasPanel());
 
@@ -282,10 +290,10 @@ public class Superstructure {
       bindTransition(State.INTAKE_PANEL_WITH_BALL_1, State.READY_BALL_1_WITH_PANEL, arm::hasPanel);
 
       bindTransition(
-          State.READY_BALL_1_WITH_PANEL, State.SCORE_PANEL_HIGH_WITH_BALL_1, scorePanelHighReq);
+          State.READY_BALL_1_WITH_PANEL, State.SCORE_PANEL_HIGH_WITH_BALL_1, scorePanelHighReq.and(atExtensionTrigger));
 
       bindTransition(
-          State.READY_BALL_1_WITH_PANEL, State.SCORE_PANEL_LOW_WITH_BALL_1, scorePanelLowReq);
+          State.READY_BALL_1_WITH_PANEL, State.SCORE_PANEL_LOW_WITH_BALL_1, scorePanelLowReq.and(atExtensionTrigger));
 
       bindTransition(State.SCORE_PANEL_HIGH_WITH_BALL_1, State.READY_BALL_1, () -> !arm.hasPanel());
 
@@ -298,10 +306,10 @@ public class Superstructure {
       bindTransition(State.INTAKE_PANEL_WITH_BALL_2, State.READY_BALL_2_WITH_PANEL, arm::hasPanel);
 
       bindTransition(
-          State.READY_BALL_2_WITH_PANEL, State.SCORE_PANEL_HIGH_WITH_BALL_2, scorePanelHighReq);
+          State.READY_BALL_2_WITH_PANEL, State.SCORE_PANEL_HIGH_WITH_BALL_2, scorePanelHighReq.and(atExtensionTrigger));
 
       bindTransition(
-          State.READY_BALL_2_WITH_PANEL, State.SCORE_PANEL_LOW_WITH_BALL_2, scorePanelLowReq);
+          State.READY_BALL_2_WITH_PANEL, State.SCORE_PANEL_LOW_WITH_BALL_2, scorePanelLowReq.and(atExtensionTrigger));
 
       bindTransition(State.SCORE_PANEL_HIGH_WITH_BALL_2, State.READY_BALL_2, () -> !arm.hasPanel());
 
