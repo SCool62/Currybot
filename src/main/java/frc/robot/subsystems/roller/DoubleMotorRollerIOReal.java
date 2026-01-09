@@ -10,7 +10,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -19,8 +18,8 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 public class DoubleMotorRollerIOReal implements RollerIO {
-    private final TalonFX leader;
-    private final TalonFX follower;
+  private final TalonFX leader;
+  private final TalonFX follower;
 
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
@@ -43,7 +42,8 @@ public class DoubleMotorRollerIOReal implements RollerIO {
    * @param config the motor's configuration
    * @implNote If using position control, put position PID and feedforward gains on slot 1
    */
-  public DoubleMotorRollerIOReal(int leaderID, int followerID, boolean opposeMasterDirection, TalonFXConfiguration config) {
+  public DoubleMotorRollerIOReal(
+      int leaderID, int followerID, boolean opposeMasterDirection, TalonFXConfiguration config) {
     leader = new TalonFX(leaderID);
     follower = new TalonFX(followerID);
 

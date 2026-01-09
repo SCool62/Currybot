@@ -55,7 +55,7 @@ public class Robot extends LoggedRobot {
   private final CommandXboxControllerSubsystem operator = new CommandXboxControllerSubsystem(1);
 
   private final Superstructure superstructure =
-      new Superstructure(driver, operator, arm, intake, routing);
+      new Superstructure(driver, operator, arm, intake, routing, elevator);
 
   public Robot() {
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -103,10 +103,10 @@ public class Robot extends LoggedRobot {
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
     // be added.
 
-
     // Defualt commands bound to use superstructure
     arm.setDefaultCommand(arm.setStateAngleVoltage(() -> superstructure.getState().getArmState()));
-    elevator.setDefaultCommand(elevator.setStateExtension(() -> superstructure.getState().getElevatorState()));
+    elevator.setDefaultCommand(
+        elevator.setStateExtension(() -> superstructure.getState().getElevatorState()));
   }
 
   @Override

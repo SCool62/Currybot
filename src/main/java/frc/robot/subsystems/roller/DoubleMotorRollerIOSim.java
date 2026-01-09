@@ -11,7 +11,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class DoubleMotorRollerIOSim implements RollerIO {
-    private final DCMotorSim physicsSim;
+  private final DCMotorSim physicsSim;
 
   private final SimpleMotorFeedforward feedforward;
   private final ProfiledPIDController positionPID;

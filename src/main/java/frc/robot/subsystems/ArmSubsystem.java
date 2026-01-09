@@ -32,14 +32,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   public enum ArmState {
     // The roller voltage numbers are largly arbitrary, but + is towards the robot and - is away
-    // Arm positions estimated from CAD with 0 at straight vertical 
+    // Arm positions estimated from CAD with 0 at straight vertical
     IDLE(Rotation2d.kZero, 0.0),
 
     INTAKE_PANEL(Rotation2d.fromDegrees(99.57), 7.0),
     // Could figure out angles for the rest of these but i'm lazy
     READY_PANEL(Rotation2d.kZero, 3.0),
     SCORE_PANEL(Rotation2d.kZero, -5);
-
 
     final Rotation2d positionSetpoint;
     final double rollerVoltage;
@@ -132,7 +131,8 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public Command setStateAngleVoltage(Supplier<ArmState> stateSupplier) {
-    return setPivotSetpointAndRollerVoltage(() -> stateSupplier.get().positionSetpoint, () -> stateSupplier.get().rollerVoltage);
+    return setPivotSetpointAndRollerVoltage(
+        () -> stateSupplier.get().positionSetpoint, () -> stateSupplier.get().rollerVoltage);
   }
 
   public boolean atExtension(Rotation2d setpoint) {
