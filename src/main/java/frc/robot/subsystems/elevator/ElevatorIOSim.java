@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 public class ElevatorIOSim implements ElevatorIO {
   // Technically x44 but DCmotor doesn't have it
-  // TODO: ACTUAL VALUES
   private ElevatorSim physicsSim =
       new ElevatorSim(
           DCMotor.getKrakenX60Foc(2), 
