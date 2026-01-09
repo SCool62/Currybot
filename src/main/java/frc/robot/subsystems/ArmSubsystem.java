@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -73,11 +74,10 @@ public class ArmSubsystem extends SubsystemBase {
 
       pivotIO = new PivotIOReal(0, pivotConfig);
     } else {
-      // TODO: GET THESE VALUES FROM CAD
       rollerIO =
           new RollerIOSim(
-              0,
-              0,
+              0.01,
+              3.37,
               // TODO: TUNE
               new SimpleMotorFeedforward(0, 0),
               new ProfiledPIDController(0, 0, 0, new Constraints(0, 0)),
@@ -85,12 +85,12 @@ public class ArmSubsystem extends SubsystemBase {
 
       pivotIO =
           new PivotIOSim(
-              // TODO: VALUES FROM CAD
-              0,
-              0,
-              0,
-              0,
-              0,
+              60.375,
+              0.027,
+              Units.inchesToMeters(16.48),
+              // Mates once again bad. I'll say a little under horizontal
+              -2.1,
+              0.0,
               new ProfiledPIDController(0, 0, 0, new Constraints(0, 0)),
               new ArmFeedforward(0, 0, 0));
     }
