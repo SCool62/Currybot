@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 public class ElevatorIOSim implements ElevatorIO {
@@ -11,7 +12,15 @@ public class ElevatorIOSim implements ElevatorIO {
   // TODO: ACTUAL VALUES
   private ElevatorSim physicsSim =
       new ElevatorSim(
-          DCMotor.getKrakenX60Foc(2), ElevatorSubsystem.GEAR_RATIO, 0, 0, 0, 0, true, 0, null);
+          DCMotor.getKrakenX60Foc(2), 
+          ElevatorSubsystem.GEAR_RATIO, 
+          Units.lbsToKilograms(12.399), 
+          // What should drum radius be?????? Its a beltivator
+          0.0, 
+          0.0, 
+          Units.inchesToMeters(35.126), 
+          true, 
+          0.0);
 
   // TODO: TUNE IN SIM
   private ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0);
